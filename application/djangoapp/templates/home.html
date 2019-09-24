@@ -1,17 +1,28 @@
-<h2>Gestion Paiement - Testing</h2>
-{% if app_a %}
+<h2>Gestion Paiement - IHM</h2>
+
+{% if info %}
     <table>
         <tbody>
             <tr>
                 <td><strong>id</strong></td><td><strong>app name</strong></td><td><strong>desc</strong></td>
             </tr>
             <tr>
-                <td>{{ app_a.id }}</td><td>{{ app_a.app_name }}</td><td>{{ app_a.desc }}</td>
+                <td>{{ info.id }}</td><td>{{ info.name }}</td><td>{{ info.desc }}</td>
             </tr>
         </tbody>
     </table>
 {% endif %}
 
-{% if app_b %}
-    <p>{{ app_b }}</p>
+{% if transactions %}
+    <ul>
+        {% for t in transactions %}
+            <li>{{ t.fields.nom }}</li>
+        {% endfor %}
+    </ul>
 {% endif %}
+
+<form action="/gestion-paiement/proceed-payement" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit">
+</form>
