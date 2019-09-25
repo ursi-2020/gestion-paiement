@@ -1,6 +1,7 @@
 <h2>Gestion Paiement - IHM</h2>
 
 {% if info %}
+    <h3>App info</h3>
     <table>
         <tbody>
             <tr>
@@ -14,15 +15,16 @@
 {% endif %}
 
 {% if transactions %}
+    <h3>Transactions</h3>
     <ul>
         {% for t in transactions %}
-            <li>{{ t.fields.nom }}</li>
+            <li>{{ t.fields.amount }}€ - {{ t.fields.date }}</li>
         {% endfor %}
     </ul>
 {% endif %}
 
+{% csrf_token %}
 <form action="/gestion-paiement/proceed-payement" method="post">
-    {% csrf_token %}
     {{ form }}
     <input type="submit" value="Submit">
 </form>
