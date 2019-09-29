@@ -1,7 +1,7 @@
-<h2>Gestion Paiement - IHM</h2>
+<h1>Gestion Paiement - IHM</h1>
 
 {% if info %}
-    <h3>App info</h3>
+    <h2>App info</h2>
     <table>
         <tbody>
             <tr>
@@ -15,16 +15,44 @@
 {% endif %}
 
 {% if transactions %}
-    <h3>Transactions</h3>
-    <ul>
-        {% for t in transactions %}
-            <li>{{ t.fields.amount }}€ - {{ t.fields.date }}</li>
-        {% endfor %}
-    </ul>
+    <h2>Transactions</h2>
+    <table>
+        <tbody>
+            <tr>
+                <td><strong>ClientID</strong></td><td><strong>Montant</strong></td><td><strong>Date</strong></td>
+            </tr>
+            {% for t in transactions %}
+                <tr>
+                    <td>{{ t.fields.client_id }}</td><td>{{ t.fields.amount }}€</td><td>{{ t.fields.date }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endif %}
 
 {% csrf_token %}
 <form action="/gestion-paiement/proceed-payement" method="post">
     {{ form }}
-    <input type="submit" value="Submit">
+    <input type="submit" value="Ajouter">
+</form>
+
+{% if products %}
+    <h2>Produits</h2>
+    <table>
+        <tbody>
+            <tr>
+                <td><strong>CodeProduit</strong></td><td><strong>QuantiteMin</strong></td><td><strong>Prix</strong></td>
+            </tr>
+            {% for p in products %}
+                <tr>
+                    <td>{{ p.fields.codeProduit }}</td><td>{{ p.fields.quantiteMin }}€</td><td>{{ p.fields.prix }}€</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+{% csrf_token %}
+<form action="/gestion-paiement/load-products" method="post">
+    <input type="submit" value="Charger de nouveaux produits">
 </form>
