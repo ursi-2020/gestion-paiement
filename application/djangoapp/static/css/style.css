@@ -1,0 +1,19 @@
+h1 {
+    text-align: center;
+}
+
+table {
+    border: 1px solid black;
+    box-shadow: 1px 1px 1px grey;
+    text-align: center;
+}
+
+table > tbody > tr:first-child {
+    background-color: darkorange;
+    color: white;
+    font-weight: bolder;
+}
+
+td {
+    padding: 0.5em;
+}

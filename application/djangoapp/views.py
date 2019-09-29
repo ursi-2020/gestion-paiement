@@ -19,15 +19,15 @@ def info(request):
         'id':"gestion-paiement",
         'name':"Gestion Paiement",
         'desc':"Récupère les informations de paiement du client et renvoie si le paiement à réussi ou échoué. "
-               "Stock également les historiques de paiement"
+               "Stock également les historiques de paiement."
     })
 
 # The IHM for testing purpose
 def ihm(request):
     form = NameForm()
-    info = json.loads(api.send_request('gestion-paiement', 'gestion-paiement/info'))
-    transactions = json.loads(json.loads(api.send_request('gestion-paiement', 'gestion-paiement/transactions')))
-    products = json.loads(json.loads(api.send_request('gestion-paiement', 'gestion-paiement/products')))
+    info = json.loads(api.send_request('gestion-paiement', 'info'))
+    transactions = json.loads(json.loads(api.send_request('gestion-paiement', 'transactions')))
+    products = json.loads(json.loads(api.send_request('gestion-paiement', 'products')))
     return render(request, 'home.html', {'info': info, 'form': form, 'transactions': transactions, 'products': products})
 
 def transactions(request):
@@ -54,14 +54,12 @@ def load_product_catalogue(request):
         return HttpResponse("Forbidden")
     else:
         models.Produit.objects.all().delete()
-        data = api.send_request("catalogue-produit", "catalogueproduit/api/data")
-        try:
-            json_data = json.loads(data)
-            for product in json_data["produits"]:
-                produits = models.Produit(codeProduit=product["codeProduit"], quantiteMin=product["quantiteMin"],
-                                          packaging=product["packaging"], prix=product["prix"])
-                produits.save()
-            return HttpResponse("Success")
-        except:
-            print(data)
-            return HttpResponse("Catalogue of products not running")
+        data = api.send_request("catalogue-produit", "api/data")
+        json_data = json.loads(data)
+        for product in json_data["produits"]:
+            produits = models.Produit(codeProduit=product["codeProduit"],
+                                      familleProduit=product["familleProduit"],
+                                      descriptionProduit=product["descriptionProduit"],
+                                      quantiteMin=product["quantiteMin"] , packaging=product["packaging"], prix=product["prix"])
+            produits.save()
+        return HttpResponse("Success")
