@@ -9,5 +9,7 @@
 
 # Rôle de l'application
 
-Le rôle de ... est de ... dans le système d'information.
-etc.
+Le rôle de pouvoir accepter les requête de paiement
+des différentes application et de les traiter.
+Les données de transactions seront stockés dans la base
+de donnée et pourront être consultés via une api.
