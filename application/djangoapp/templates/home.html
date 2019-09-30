@@ -67,6 +67,28 @@
             <form action="/load-products" method="post">
                 <input class="btn btn-primary" type="submit" value="Charger de nouveaux produits">
             </form>
+
+            {% if clients %}
+                <h2>Clients</h2>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>idClient</td><td>firstName</td><td>lastName</td><td>fidelityPoint</td><td>payment</td><td>account</td>
+                        </tr>
+                        {% for c in clients %}
+                            <tr>
+                                <td>{{ c.fields.idClient }}</td><td>{{ c.fields.firstName }}</td><td>{{ c.fields.lastName }}</td><td>{{ c.fields.fidelityPoint }}</td><td>{{ c.fields.payment }}</td><td>{{ c.fields.account }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+
+            <br>
+            {% csrf_token %}
+            <form action="/load-clients" method="post">
+                <input class="btn btn-primary" type="submit" value="Charger de nouveaux clients">
+            </form>
         </div>
     </body>
 </html>

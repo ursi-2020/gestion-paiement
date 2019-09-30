@@ -28,7 +28,8 @@ def ihm(request):
     info = json.loads(api.send_request('gestion-paiement', 'info'))
     transactions = json.loads(json.loads(api.send_request('gestion-paiement', 'transactions')))
     products = json.loads(json.loads(api.send_request('gestion-paiement', 'products')))
-    return render(request, 'home.html', {'info': info, 'form': form, 'transactions': transactions, 'products': products})
+    clients = json.loads(json.loads(api.send_request('gestion-paiement', 'clients')))
+    return render(request, 'home.html', {'info': info, 'form': form, 'transactions': transactions, 'products': products, 'clients': clients})
 
 def transactions(request):
     transactions = serializers.serialize('json', models.Transaction.objects.all())
@@ -37,6 +38,10 @@ def transactions(request):
 def products(request):
     products = serializers.serialize('json', models.Produit.objects.all())
     return JsonResponse(products, safe=False)
+
+def clients(request):
+    clients = serializers.serialize('json', models.Customer.objects.all())
+    return JsonResponse(clients, safe=False)
 
 # Main function that handles paiement
 @csrf_exempt
@@ -62,4 +67,22 @@ def load_product_catalogue(request):
                                       descriptionProduit=product["descriptionProduit"],
                                       quantiteMin=product["quantiteMin"] , packaging=product["packaging"], prix=product["prix"])
             produits.save()
+        return HttpResponse("Success")
+
+# Import Catalogue Produit
+@csrf_exempt
+def load_clients(request):
+    if request.method != 'POST':
+        return HttpResponse("Forbidden")
+    else:
+        models.Customer.objects.all().delete()
+        data = api.send_request("crm", "api/data")
+        json_data = json.loads(data)
+        for client in json_data:
+            client_tmp = models.Customer(idClient=client["idClient"],
+                                      firstName=client["firstName"],
+                                      lastName=client["lastName"],
+                                      fidelityPoint=client["fidelityPoint"] ,
+                                        payment=client["payment"], account=client["account"])
+            client_tmp.save()
         return HttpResponse("Success")
