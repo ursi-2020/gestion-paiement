@@ -39,9 +39,18 @@ class Customer(models.Model):
 
 
 class Transaction(models.Model):
-    client_id = models.CharField(max_length=200)
+    client_id = models.TextField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateTimeField(default=datetime.now, blank=True)
 
     def __str__(self):
         return 'Transaction: {}'.format(self.date)
+
+
+class Incident(models.Model):
+    client_id = models.TextField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateTimeField(default=datetime.now, blank=True)
+
+    def __str__(self):
+        return 'Incident: {}'.format(self.date)

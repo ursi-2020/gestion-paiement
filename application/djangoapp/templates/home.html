@@ -21,6 +21,8 @@
                         </tr>
                     </tbody>
                 </table>
+                <br>
+                <br>
             {% endif %}
 
             {% if transactions %}
@@ -32,7 +34,7 @@
                         </tr>
                         {% for t in transactions %}
                             <tr>
-                                <td>{{ t.fields.client_id }}</td><td>{{ t.fields.amount }}€</td><td>{{ t.fields.date }}</td>
+                                <td>{{ t.client_id }}</td><td>{{ t.amount }}€</td><td>{{ t.date }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -41,10 +43,19 @@
 
             <br>
             {% csrf_token %}
-            <form action="/proceed-payement" method="post">
-                {{ form }}
-                <input class="btn btn-primary" type="submit" value="Ajouter">
+            <form action="/api/proceed-payement" method="post" class="form-test">
+                <div class="form-group">
+                    <label for="client_id">Numéro client</label>
+                    <input name="client_id" type="text" class="form-control" id="client_id" placeholder="Entrez votre numéro client">
+                </div>
+                <div class="form-group">
+                    <label for="amount">Montant</label>
+                    <input name="amount" type="number" step=".01" class="form-control" id="amount" placeholder="Entrez un montant">
+                </div>
+                <input class="btn btn-primary" type="submit" value="Ajouter une transaction">
             </form>
+            <br>
+            <br>
 
             {% if products %}
                 <h2>Produits</h2>
@@ -55,7 +66,7 @@
                         </tr>
                         {% for p in products %}
                             <tr>
-                                <td>{{ p.fields.codeProduit }}</td><td>{{ p.fields.familleProduit }}</td><td>{{ p.fields.descriptionProduit }}</td><td>{{ p.fields.quantiteMin }}</td><td>{{ p.fields.packaging }}</td><td>{{ p.fields.prix }}€</td>
+                                <td>{{ p.codeProduit }}</td><td>{{ p.familleProduit }}</td><td>{{ p.descriptionProduit }}</td><td>{{ p.quantiteMin }}</td><td>{{ p.packaging }}</td><td>{{ p.prix }}€</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -67,6 +78,8 @@
             <form action="/load-products" method="post">
                 <input class="btn btn-primary" type="submit" value="Charger de nouveaux produits">
             </form>
+            <br>
+            <br>
 
             {% if clients %}
                 <h2>Clients</h2>
@@ -77,7 +90,7 @@
                         </tr>
                         {% for c in clients %}
                             <tr>
-                                <td>{{ c.fields.idClient }}</td><td>{{ c.fields.firstName }}</td><td>{{ c.fields.lastName }}</td><td>{{ c.fields.fidelityPoint }}</td><td>{{ c.fields.payment }}</td><td>{{ c.fields.account }}</td>
+                                <td>{{ c.idClient }}</td><td>{{ c.firstName }}</td><td>{{ c.lastName }}</td><td>{{ c.fidelityPoint }}</td><td>{{ c.payment }}</td><td>{{ c.account }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -89,6 +102,8 @@
             <form action="/load-clients" method="post">
                 <input class="btn btn-primary" type="submit" value="Charger de nouveaux clients">
             </form>
+            <br>
+            <br>
         </div>
     </body>
 </html>

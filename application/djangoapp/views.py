@@ -7,7 +7,6 @@ from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
 import json
 from . import models
-from .forms import NameForm
 
 def index(request):
     time = api.send_request('scheduler', 'clock/time')
@@ -24,39 +23,46 @@ def info(request):
 
 # The IHM for testing purpose
 def ihm(request):
-    form = NameForm()
-    info = json.loads(api.send_request('gestion-paiement', 'info'))
-    transactions = json.loads(json.loads(api.send_request('gestion-paiement', 'transactions')))
-    products = json.loads(json.loads(api.send_request('gestion-paiement', 'products')))
-    clients = json.loads(json.loads(api.send_request('gestion-paiement', 'clients')))
-    return render(request, 'home.html', {'info': info, 'form': form, 'transactions': transactions, 'products': products, 'clients': clients})
+    info = json.loads(api.send_request('gestion-paiement', 'api/info'))
+    context = {
+        'info': info,
+        'transactions': models.Transaction.objects.all(),
+        'products': models.Produit.objects.all(),
+        'clients': models.Customer.objects.all()
+    }
+    return render(request, 'home.html', context)
 
 def transactions(request):
-    transactions = serializers.serialize('json', models.Transaction.objects.all())
-    return JsonResponse(transactions, safe=False)
-
-def products(request):
-    products = serializers.serialize('json', models.Produit.objects.all())
-    return JsonResponse(products, safe=False)
-
-def clients(request):
-    clients = serializers.serialize('json', models.Customer.objects.all())
-    return JsonResponse(clients, safe=False)
+    client_id = request.GET.get('client_id')
+    if (client_id):
+        transactions = list(models.Transaction.objects.filter(client_id=client_id).values())
+        return JsonResponse(transactions, safe=False)
+    else:
+        transactions = list(models.Transaction.objects.all().values())
+        return JsonResponse(transactions, safe=False)
 
 # Main function that handles paiement
 @csrf_exempt
 def proceed_payement(request):
     if request.method != 'POST':
-        return HttpResponse("Forbidden")
+        return HttpResponse(status=403)
     else:
-        models.Transaction.objects.create(amount=request.POST['amount'])
-        return HttpResponse("Saved")
+        client_id = request.POST.get('client_id')
+        payement_method = request.POST.get('payement_method', 'CASH')
+        card = request.POST.get('card', None)
+        amount = request.POST.get('amount')
+
+        models.Transaction.objects.create(client_id=client_id, amount=amount)
+        return JsonResponse({
+            'status': 'OK',
+            'message': 'Transaction acceptée!'
+        })
 
 # Import Catalogue Produit
 @csrf_exempt
 def load_product_catalogue(request):
     if request.method != 'POST':
-        return HttpResponse("Forbidden")
+        return HttpResponse(status=403)
     else:
         models.Produit.objects.all().delete()
         data = api.send_request("catalogue-produit", "api/data")
@@ -67,13 +73,13 @@ def load_product_catalogue(request):
                                       descriptionProduit=product["descriptionProduit"],
                                       quantiteMin=product["quantiteMin"] , packaging=product["packaging"], prix=product["prix"])
             produits.save()
-        return HttpResponse("Success")
+        return HttpResponse("Produits sauvegardés.")
 
-# Import Catalogue Produit
+# Import Clients list
 @csrf_exempt
 def load_clients(request):
     if request.method != 'POST':
-        return HttpResponse("Forbidden")
+        return HttpResponse(status=403)
     else:
         models.Customer.objects.all().delete()
         data = api.send_request("crm", "api/data")
@@ -85,4 +91,4 @@ def load_clients(request):
                                       fidelityPoint=client["fidelityPoint"] ,
                                         payment=client["payment"], account=client["account"])
             client_tmp.save()
-        return HttpResponse("Success")
+        return HttpResponse("Clients sauvegardés.")
