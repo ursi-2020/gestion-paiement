@@ -41,6 +41,22 @@
                 </table>
             {% endif %}
 
+            {% if incidents %}
+                <h2>Incidents</h2>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>ClientID</td><td>Montant</td><td>Date</td>
+                        </tr>
+                        {% for i in incidents %}
+                            <tr>
+                                <td>{{ i.client_id }}</td><td>{{ i.amount }}€</td><td>{{ i.date }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+
             <br>
             {% csrf_token %}
             <form action="/api/proceed-payement" method="post" class="form-test">

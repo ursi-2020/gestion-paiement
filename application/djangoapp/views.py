@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
 import json
 from . import models
+from random import *
 
 def index(request):
     time = api.send_request('scheduler', 'clock/time')
@@ -27,6 +28,7 @@ def ihm(request):
     context = {
         'info': info,
         'transactions': models.Transaction.objects.all(),
+        'incidents': models.Incident.objects.all(),
         'products': models.Produit.objects.all(),
         'clients': models.Customer.objects.all()
     }
@@ -48,15 +50,21 @@ def proceed_payement(request):
         return HttpResponse(status=403)
     else:
         client_id = request.POST.get('client_id')
-        payement_method = request.POST.get('payement_method', 'CASH')
         card = request.POST.get('card', None)
         amount = request.POST.get('amount')
 
-        models.Transaction.objects.create(client_id=client_id, amount=amount)
-        return JsonResponse({
-            'status': 'OK',
-            'message': 'Transaction acceptée!'
-        })
+        if randint(0,3) == 0:
+            models.Incident.objects.create(client_id=client_id, amount=amount)
+            return JsonResponse({
+                'status': 'ERROR',
+                'message': 'Transaction refusée! Cause possible: random'
+            })
+        else:
+            models.Transaction.objects.create(client_id=client_id, amount=amount)
+            return JsonResponse({
+                'status': 'OK',
+                'message': 'Transaction acceptée!'
+            })
 
 # Import Catalogue Produit
 @csrf_exempt
@@ -65,7 +73,7 @@ def load_product_catalogue(request):
         return HttpResponse(status=403)
     else:
         models.Produit.objects.all().delete()
-        data = api.send_request("catalogue-produit", "api/data")
+        data = api.send_request("catalogue-produit", "api/get-all")
         json_data = json.loads(data)
         for product in json_data["produits"]:
             produits = models.Produit(codeProduit=product["codeProduit"],
