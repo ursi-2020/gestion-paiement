@@ -39,6 +39,8 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <a href="{% url 'clean_transactions' %}" class="btn btn-secondary btn-sm">Supprimer les transactions</a>
+                <br>
             {% endif %}
 
             {% if incidents %}
@@ -55,6 +57,9 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <a href="{% url 'clean_incidents' %}" class="btn btn-secondary btn-sm">Supprimer les incidents</a>
+                <br>
+                <br>
             {% endif %}
 
             <br>
