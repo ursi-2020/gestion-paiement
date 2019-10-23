@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from apipkg import api_manager as api
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
@@ -42,6 +42,14 @@ def transactions(request):
     else:
         transactions = list(models.Transaction.objects.all().values())
         return JsonResponse(transactions, safe=False)
+
+def clean_transactions(request):
+    models.Transaction.objects.all().delete()
+    return redirect(ihm)
+
+def clean_incidents(request):
+    models.Incident.objects.all().delete()
+    return redirect(ihm)
 
 # Main function that handles paiement
 @csrf_exempt

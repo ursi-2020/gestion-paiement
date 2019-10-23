@@ -8,5 +8,7 @@ urlpatterns = [
     path('api/proceed-payement', views.proceed_payement, name='proceed-payement'),
     path('api/transactions', views.transactions, name='transactions'),
     path('load-products', views.load_product_catalogue, name='load-products'),
+    path('clean-transactions', views.clean_transactions, name='clean_transactions'),
+    path('clean-incidents', views.clean_incidents, name='clean_incidents'),
     path('load-clients', views.load_clients, name='load-clients'),
 ]
