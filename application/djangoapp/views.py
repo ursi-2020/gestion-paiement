@@ -52,15 +52,17 @@ def proceed_payement(request):
         client_id = request.POST.get('client_id')
         card = request.POST.get('card', None)
         amount = request.POST.get('amount')
+        converted_amount = int(amount) / 100
 
         if randint(0,3) == 0:
-            models.Incident.objects.create(client_id=client_id, amount=amount)
+            message = 'Cause possible: random'
+            models.Incident.objects.create(client_id=client_id, amount=converted_amount, message=message)
             return JsonResponse({
                 'status': 'ERROR',
-                'message': 'Transaction refusée! Cause possible: random'
+                'message': 'Transaction refusée! ' + message
             })
         else:
-            models.Transaction.objects.create(client_id=client_id, amount=amount)
+            models.Transaction.objects.create(client_id=client_id, amount=converted_amount)
             return JsonResponse({
                 'status': 'OK',
                 'message': 'Transaction acceptée!'

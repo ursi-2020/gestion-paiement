@@ -6,9 +6,8 @@
 * route: 'api/proceed-payement'
 * body: {
 <br>client_id: l'id du client qui effectue le paiement
-<br>payement_method: la méthode de paiement ('CARD' ou 'CASH')
 <br>card: le numéro de carte du client (requis si payement_method = 'CARD')
-<br>amount (requis): le montant du paiement
+<br>amount (requis): le montant du paiement en centimes
 <br>}
 * retourne: {
 <br>status: 'OK' ou 'ERROR'

@@ -51,6 +51,7 @@ class Incident(models.Model):
     client_id = models.TextField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateTimeField(default=datetime.now, blank=True)
+    message = models.CharField(max_length=255, default="")
 
     def __str__(self):
         return 'Incident: {}'.format(self.date)

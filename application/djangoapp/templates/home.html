@@ -46,11 +46,11 @@
                 <table>
                     <tbody>
                         <tr>
-                            <td>ClientID</td><td>Montant</td><td>Date</td>
+                            <td>ClientID</td><td>Montant</td><td>Message</td><td>Date</td>
                         </tr>
                         {% for i in incidents %}
                             <tr>
-                                <td>{{ i.client_id }}</td><td>{{ i.amount }}€</td><td>{{ i.date }}</td>
+                                <td>{{ i.client_id }}</td><td>{{ i.amount }}€</td><td>{{ i.message }}</td><td>{{ i.date }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -65,7 +65,7 @@
                     <input name="client_id" type="text" class="form-control" id="client_id" placeholder="Entrez votre numéro client">
                 </div>
                 <div class="form-group">
-                    <label for="amount">Montant</label>
+                    <label for="amount">Montant (c)</label>
                     <input name="amount" type="number" step=".01" class="form-control" id="amount" placeholder="Entrez un montant">
                 </div>
                 <input class="btn btn-primary" type="submit" value="Ajouter une transaction">
