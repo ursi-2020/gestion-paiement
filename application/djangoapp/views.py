@@ -60,6 +60,8 @@ def proceed_payement(request):
         client_id = request.POST.get('client_id')
         card = request.POST.get('card', None)
         amount = request.POST.get('amount')
+        payement_method = request.POST.get('payement_method')
+
         converted_amount = int(amount) / 100
 
         if randint(0,3) == 0:
