@@ -105,10 +105,10 @@ def load_clients(request):
         data = api.send_request("crm", "api/data")
         json_data = json.loads(data)
         for client in json_data:
-            client_tmp = models.Customer(idClient=client["idClient"],
-                                      firstName=client["firstName"],
-                                      lastName=client["lastName"],
-                                      fidelityPoint=client["fidelityPoint"] ,
-                                        payment=client["payment"], account=client["account"])
+            client_tmp = models.Customer(idClient=client["IdClient"],
+                                      firstName=client["Prenom"],
+                                      lastName=client["Nom"],
+                                      fidelityPoint=client["Credit"],
+                                        payment=client["Montant"], account=client["Compte"])
             client_tmp.save()
         return HttpResponse("Clients sauvegardés.")
