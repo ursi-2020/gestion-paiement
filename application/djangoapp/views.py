@@ -4,8 +4,11 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
+
+from pip._vendor import requests
+
 from . import models
 from random import *
 
@@ -112,3 +115,31 @@ def load_clients(request):
                                         payment=client["Montant"], account=client["Compte"])
             client_tmp.save()
         return HttpResponse("Clients sauvegardés.")
+
+
+@csrf_exempt
+def schedule_load_clients(request):
+    clock_time = api.send_request('scheduler', 'clock/time')
+    time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')
+    time = time + timedelta(seconds=180)
+    time_str = time.strftime('%d/%m/%Y-%H:%M:%S')
+    body = {
+        "target_app": 'gestion-paiement',
+        "target_url": 'load-clients',
+        "time": time_str,
+        "recurrence": "day",
+        "data": '{}',
+        "source_app": "gestion-paiement",
+        "name": "gestion-paiement-load-clients"
+    }
+    schedule_task(body)
+    return redirect('index')
+
+
+def schedule_task(body):
+    headers = {'Host': 'scheduler'}
+    r = requests.post(api.api_services_url + 'schedule/add', headers=headers, json=body)
+    print("schedule error code: ")
+    print(r.status_code)
+    print(r.text)
+    return

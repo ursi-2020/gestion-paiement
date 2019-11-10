@@ -125,6 +125,15 @@
             </form>
             <br>
             <br>
+            <h3>Scheduler</h3>
+            {% csrf_token %}
+            <form action="/schedule_load_clients" method="post">
+                <input class="btn btn-primary" type="submit" value="Scheduler le chargement de nouveaux clients">
+            </form>
+            <br>
+            <br>
+            <br>
+            <br>
         </div>
     </body>
 </html>

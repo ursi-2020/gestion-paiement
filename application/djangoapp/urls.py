@@ -11,4 +11,5 @@ urlpatterns = [
     path('clean-transactions', views.clean_transactions, name='clean_transactions'),
     path('clean-incidents', views.clean_incidents, name='clean_incidents'),
     path('load-clients', views.load_clients, name='load-clients'),
+    path('schedule_load_clients', views.schedule_load_clients, name='schedule_load_clients'),
 ]
