@@ -64,18 +64,35 @@ def proceed_payement(request):
         card = request.POST.get('card', None)
         amount = request.POST.get('amount')
         payement_method = request.POST.get('payement_method')
+        credit_date = request.POST.get('credit_date')
 
-        converted_amount = int(amount) / 100
+        if payement_method == 'CREDIT':
+            if not credit_date:
+                return JsonResponse({
+                    'status': 'ERROR',
+                    'message': 'Transaction refusée! Pas date de credit entrée.'
+                })
+            #auth = api.post_request('crm', '/api/allow_credit', {'IdClient': client_id, 'Montant': amount, 'Date': credit_date})
+            #print(auth)
+            return JsonResponse({
+                'status': 'OK',
+                'message': 'Transaction acceptée!'
+            })
+        elif payement_method == 'CASH':
+            return JsonResponse({
+                'status': 'OK',
+                'message': 'Transaction inutile sur du cash.'
+            })
 
         if randint(0,3) == 0:
-            message = 'Cause possible: random'
-            models.Incident.objects.create(client_id=client_id, amount=converted_amount, message=message)
+            message = 'Cause possible: random.'
+            models.Incident.objects.create(client_id=client_id, amount=amount, message=message)
             return JsonResponse({
                 'status': 'ERROR',
                 'message': 'Transaction refusée! ' + message
             })
         else:
-            models.Transaction.objects.create(client_id=client_id, amount=converted_amount)
+            models.Transaction.objects.create(client_id=client_id, amount=amount)
             return JsonResponse({
                 'status': 'OK',
                 'message': 'Transaction acceptée!'
@@ -125,7 +142,7 @@ def schedule_load_clients(request):
     time_str = time.strftime('%d/%m/%Y-%H:%M:%S')
     body = {
         "target_app": 'gestion-paiement',
-        "target_url": 'load-clients',
+        "target_url": '/load-clients',
         "time": time_str,
         "recurrence": "day",
         "data": '{}',

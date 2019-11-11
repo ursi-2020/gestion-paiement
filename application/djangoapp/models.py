@@ -40,7 +40,7 @@ class Customer(models.Model):
 
 class Transaction(models.Model):
     client_id = models.TextField()
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.IntegerField(default=0)
     date = models.DateTimeField(default=datetime.now, blank=True)
 
     def __str__(self):

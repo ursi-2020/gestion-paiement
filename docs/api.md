@@ -6,7 +6,9 @@
 * route: 'api/proceed-payement'
 * body: {
 <br>client_id: l'id du client qui effectue le paiement
+<br>payement_method: 'CARD', 'CASH' ou 'CREDIT'
 <br>card: le numéro de carte du client (requis si payement_method = 'CARD')
+<br>credit_date: la date du futur credit (requis si payement_method = 'CREDIT')
 <br>amount (requis): le montant du paiement en centimes
 <br>}
 * retourne: {

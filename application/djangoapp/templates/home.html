@@ -34,7 +34,7 @@
                         </tr>
                         {% for t in transactions %}
                             <tr>
-                                <td>{{ t.client_id }}</td><td>{{ t.amount }}€</td><td>{{ t.date }}</td>
+                                <td>{{ t.client_id }}</td><td>{{ t.amount }}c</td><td>{{ t.date }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -52,7 +52,7 @@
                         </tr>
                         {% for i in incidents %}
                             <tr>
-                                <td>{{ i.client_id }}</td><td>{{ i.amount }}€</td><td>{{ i.message }}</td><td>{{ i.date }}</td>
+                                <td>{{ i.client_id }}</td><td>{{ i.amount }}c</td><td>{{ i.message }}</td><td>{{ i.date }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -71,7 +71,19 @@
                 </div>
                 <div class="form-group">
                     <label for="amount">Montant (c)</label>
-                    <input name="amount" type="number" step=".01" class="form-control" id="amount" placeholder="Entrez un montant">
+                    <input name="amount" type="number" step="1" class="form-control" id="amount" placeholder="Entrez un montant">
+                </div>
+                <div class="form-group">
+                    <label for="payement_method">Type de paiement</label>
+                    <select name="payement_method" class="custom-select" id="payement_method">
+                        <option selected value="CARD">Carte</option>
+                        <option value="CASH">Cash</option>
+                        <option value="CREDIT">Crédit</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="credit_date">Date (required for credit)</label>
+                    <input name="credit_date" type="date" class="form-control" id="credit_date">
                 </div>
                 <input class="btn btn-primary" type="submit" value="Ajouter une transaction">
             </form>
