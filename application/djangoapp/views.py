@@ -75,7 +75,7 @@ def proceed_payement(request):
                     'message': 'Transaction refusée! Pas date de credit entrée.'
                 })
             body = {'idClient': client_id, 'Montant': amount, 'Date': credit_date}
-            status_res = api.post_request2('crm', '/api/allow_credit', body)
+            status_res = api.post_request2('crm', '/api/allow_credit', json.dumps(body))
             if status_res != None:
                 if status_res[1]['Allowed']:
                     return JsonResponse({
