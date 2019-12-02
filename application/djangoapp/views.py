@@ -60,6 +60,8 @@ def proceed_payement(request):
     if request.method != 'POST':
         return HttpResponse(status=403)
     else:
+        today = api.send_request('scheduler', 'clock/time')
+        time = datetime.strptime(today, '"%d/%m/%Y-%H:%M:%S"')
         client_id = request.POST.get('client_id')
         card = request.POST.get('card', None)
         amount = request.POST.get('amount')
@@ -72,11 +74,21 @@ def proceed_payement(request):
                     'status': 'ERROR',
                     'message': 'Transaction refusée! Pas date de credit entrée.'
                 })
-            #auth = api.post_request('crm', '/api/allow_credit', {'IdClient': client_id, 'Montant': amount, 'Date': credit_date})
-            #print(auth)
+            status_res = api.post_request2('crm', '/api/allow_credit', {'IdClient': client_id, 'Montant': amount, 'Date': credit_date})
+            if status_res != None:
+                if status_res[1]['Allowed']:
+                    return JsonResponse({
+                        'status': 'OK',
+                        'message': 'Transaction acceptée!'
+                    })
+                else:
+                    return JsonResponse({
+                        'status': 'ERROR',
+                        'message': 'Transaction refusée, client non authorisé.'
+                    })
             return JsonResponse({
-                'status': 'OK',
-                'message': 'Transaction acceptée!'
+                'status': 'ERROR',
+                'message': 'Transaction refusée, client inconnu au bataillon.'
             })
         elif payement_method == 'CASH':
             return JsonResponse({
@@ -86,13 +98,13 @@ def proceed_payement(request):
 
         if randint(0,3) == 0:
             message = 'Cause possible: random.'
-            models.Incident.objects.create(client_id=client_id, amount=amount, message=message)
+            models.Incident.objects.create(client_id=client_id, amount=amount, date=time, message=message)
             return JsonResponse({
                 'status': 'ERROR',
                 'message': 'Transaction refusée! ' + message
             })
         else:
-            models.Transaction.objects.create(client_id=client_id, amount=amount)
+            models.Transaction.objects.create(client_id=client_id, amount=amount, date=time)
             return JsonResponse({
                 'status': 'OK',
                 'message': 'Transaction acceptée!'
