@@ -63,7 +63,7 @@ def proceed_payement(request):
         today = api.send_request('scheduler', 'clock/time')
         time = datetime.strptime(today, '"%d/%m/%Y-%H:%M:%S"')
         client_id = request.POST.get('client_id')
-        card = request.POST.get('card', None)
+        card = request.POST.get('card')
         amount = request.POST.get('amount')
         payement_method = request.POST.get('payement_method')
         credit_date = request.POST.get('credit_date')
@@ -76,9 +76,8 @@ def proceed_payement(request):
                 })
             body = {'idClient': client_id, 'Montant': amount, 'Date': credit_date}
             status_res = api.post_request2('crm', '/api/allow_credit', json.dumps(body))
-            if status_res != None:
+            if status_res[0] == 200:
                 data = json.loads(status_res[1].content.decode('utf-8'))
-                print("Data", data)
                 if data['Allowed']:
                     return JsonResponse({
                         'status': 'OK',
@@ -99,14 +98,21 @@ def proceed_payement(request):
                 'message': 'Transaction inutile sur du cash.'
             })
 
-        if randint(0,3) == 0:
-            message = 'Cause possible: random.'
-            models.Incident.objects.create(client_id=client_id, amount=amount, date=time, message=message)
+        body = {'compteBancaire': card, 'montant': int(amount) / 100}
+        status_res = api.post_request2('bk', '/debit_account', json.dumps(body))
+        if status_res[0] != 200:
+            models.Incident.objects.create(client_id=client_id, amount=amount, date=time)
             return JsonResponse({
                 'status': 'ERROR',
-                'message': 'Transaction refusée! ' + message
+                'message': 'Transaction refusée! Erreur interne au simulateur.'
             })
         else:
+            data = json.loads(status_res[1].content.decode('utf-8'))
+            if data['result'] != 'ok':
+                return JsonResponse({
+                    'status': 'ERROR',
+                    'message': 'Transaction refusée! Paiement refusé.'
+                })
             models.Transaction.objects.create(client_id=client_id, amount=amount, date=time)
             return JsonResponse({
                 'status': 'OK',
