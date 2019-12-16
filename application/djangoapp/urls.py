@@ -4,7 +4,6 @@ from . import views
 
 urlpatterns = [
     path('', views.ihm, name='index'),
-    path('', views.schedule_load_clients, name='auto_schedule_load_clients'),
     path('api/info', views.info, name='info'),
     path('api/proceed-payement', views.proceed_payement, name='proceed-payement'),
     path('api/transactions', views.transactions, name='transactions'),

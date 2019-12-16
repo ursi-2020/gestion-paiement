@@ -27,6 +27,7 @@ def info(request):
 
 # The IHM for testing purpose
 def ihm(request):
+    schedule_load_clients(request)
     info = json.loads(api.send_request('gestion-paiement', 'api/info'))
     context = {
         'info': info,
