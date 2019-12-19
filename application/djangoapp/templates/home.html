@@ -1,13 +1,13 @@
 {% load static %}
 <html>
     <head>
-        <title>Gestion Paiement</title>
+        <title>Paiement</title>
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
     </head>
     <body>
-        <h1>Paiement - IHM</h1>
+        <h1>Gestion des Paiements - IHM</h1>
         <div class="container">
             {% if info %}
                 <h2>App info</h2>
@@ -48,16 +48,34 @@
                 <table>
                     <tbody>
                         <tr>
-                            <td>ClientID</td><td>Montant</td><td>Message</td><td>Date</td>
+                            <td>ClientID</td><td>Montant</td><td>Date</td>
                         </tr>
                         {% for i in incidents %}
                             <tr>
-                                <td>{{ i.client_id }}</td><td>{{ i.amount }}c</td><td>{{ i.message }}</td><td>{{ i.date }}</td>
+                                <td>{{ i.client_id }}</td><td>{{ i.amount }}c</td><td>{{ i.date }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
                 <a href="{% url 'clean_incidents' %}" class="btn btn-secondary btn-sm">Supprimer les incidents</a>
+                <br>
+                <br>
+            {% endif %}
+
+            {% if credits %}
+                <h2>Paiements programmés</h2>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>ClientID</td><td>Montant</td><td>Date</td>
+                        </tr>
+                        {% for c in credits %}
+                            <tr>
+                                <td>{{ c.client_id }}</td><td>{{ c.amount }}c</td><td>{{ c.date }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
                 <br>
                 <br>
             {% endif %}

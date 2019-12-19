@@ -49,9 +49,16 @@ class Transaction(models.Model):
 
 class Incident(models.Model):
     client_id = models.TextField()
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.IntegerField(default=0)
     date = models.DateTimeField(default=datetime.now, blank=True)
-    message = models.CharField(max_length=255, default="")
 
     def __str__(self):
         return 'Incident: {}'.format(self.date)
+
+class ScheduledCredits(models.Model):
+    client_id = models.TextField()
+    amount = models.IntegerField(default=0)
+    date = models.DateTimeField(default=datetime.now, blank=True)
+
+    def __str__(self):
+        return 'Scheduled Credits: {}'.format(self.date)

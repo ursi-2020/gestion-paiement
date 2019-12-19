@@ -11,6 +11,7 @@ from pip._vendor import requests
 
 from . import models
 from random import *
+from django.utils.timezone import make_aware
 
 def index(request):
     time = api.send_request('scheduler', 'clock/time')
@@ -32,6 +33,7 @@ def ihm(request):
         'info': info,
         'transactions': models.Transaction.objects.all(),
         'incidents': models.Incident.objects.all(),
+        'credits': models.ScheduledCredits.objects.all(),
         'products': models.Produit.objects.all(),
         'clients': models.Customer.objects.all()
     }
@@ -79,6 +81,7 @@ def proceed_payement(request):
             if status_res[0] == 200:
                 data = json.loads(status_res[1].content.decode('utf-8'))
                 if data['Allowed']:
+                    models.ScheduledCredits.objects.create(client_id=client_id, amount=amount, date=make_aware(time))
                     return JsonResponse({
                         'status': 'OK',
                         'message': 'Transaction acceptée!'
@@ -90,7 +93,7 @@ def proceed_payement(request):
                     })
             return JsonResponse({
                 'status': 'ERROR',
-                'message': 'Transaction refusée, client inconnu au bataillon.'
+                'message': 'Transaction refusée, erreur du CRM.'
             })
         elif payement_method == 'CASH':
             return JsonResponse({
@@ -98,10 +101,11 @@ def proceed_payement(request):
                 'message': 'Transaction inutile sur du cash.'
             })
 
+        # CARD
         body = {'compteBancaire': card, 'montant': int(amount) / 100}
         status_res = api.post_request2('bk', '/debit_account', json.dumps(body))
         if status_res[0] != 200:
-            models.Incident.objects.create(client_id=client_id, amount=amount, date=time)
+            models.Incident.objects.create(client_id=client_id, amount=amount, date=make_aware(time))
             return JsonResponse({
                 'status': 'ERROR',
                 'message': 'Transaction refusée! Erreur interne au simulateur.'
@@ -109,11 +113,12 @@ def proceed_payement(request):
         else:
             data = json.loads(status_res[1].content.decode('utf-8'))
             if data['result'] != 'ok':
+                models.Incident.objects.create(client_id=client_id, amount=amount, date=make_aware(time))
                 return JsonResponse({
                     'status': 'ERROR',
                     'message': 'Transaction refusée! Paiement refusé.'
                 })
-            models.Transaction.objects.create(client_id=client_id, amount=amount, date=time)
+            models.Transaction.objects.create(client_id=client_id, amount=amount, date=make_aware(time))
             return JsonResponse({
                 'status': 'OK',
                 'message': 'Transaction acceptée!'
