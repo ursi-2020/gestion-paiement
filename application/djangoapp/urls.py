@@ -7,6 +7,7 @@ urlpatterns = [
     path('api/info', views.info, name='info'),
     path('api/proceed-payement', views.proceed_payement, name='proceed-payement'),
     path('api/transactions', views.transactions, name='transactions'),
+    path('api/incidents', views.incidents, name='incidents'),
     path('load-products', views.load_product_catalogue, name='load-products'),
     path('clean-transactions', views.clean_transactions, name='clean_transactions'),
     path('clean-incidents', views.clean_incidents, name='clean_incidents'),

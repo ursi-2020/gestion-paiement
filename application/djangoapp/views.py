@@ -49,6 +49,15 @@ def transactions(request):
         transactions = list(models.Transaction.objects.all().values())
         return JsonResponse(transactions, safe=False)
 
+def incidents(request):
+    client_id = request.GET.get('client_id')
+    if (client_id):
+        incidents = list(models.Incident.objects.filter(client_id=client_id).values())
+        return JsonResponse(incidents, safe=False)
+    else:
+        incidents = list(models.Incident.objects.all().values())
+        return JsonResponse(incidents, safe=False)
+
 def clean_transactions(request):
     models.Transaction.objects.all().delete()
     return redirect(ihm)
@@ -183,7 +192,4 @@ def schedule_load_clients(request):
 def schedule_task(body):
     headers = {'Host': 'scheduler'}
     r = requests.post(api.api_services_url + 'schedule/add', headers=headers, json=body)
-    print("schedule error code: ")
-    print(r.status_code)
-    print(r.text)
     return
